@@ -1,0 +1,48 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+    />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>Neumorphic Login Form</title>
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="logo">
+        <img src="https://picsum.photos/50" alt="" />
+      </div>
+      <div class="text-center mt-4 name">Login Form</div>
+      
+      <form class="p-3 mt-3" method="post" action="{% url 'myapp:login' %}">
+        {% csrf_token %}
+        <div class="form-field d-flex align-items-center">
+            <span class="far fa-user"></span>
+            <input type="text" name="username" id="userName" placeholder="Username" required>
+        </div>
+        <div class="form-field d-flex align-items-center">
+            <span class="fas fa-key"></span>
+            <input type="password" name="password" id="pwd" placeholder="Password" required>
+        </div>
+        <div class="form-check">
+            <input type="checkbox" name="agree" id="agree" required>
+            <label for="agree">Я согласен на обработку персональных данных в соответствии с <a href="">Политикой конфиденциальности</a>.</label>
+        </div>
+        <button type="submit" class="btn mt-3">Login</button>
+    </form>
+    
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
