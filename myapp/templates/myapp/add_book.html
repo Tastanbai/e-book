@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    <title>增加书籍</title>
+{% endblock title %}
+
+{% block header-info %}
+    <h3>增加书籍</h3>
+    <a href="{% url 'crud:book' %}" class="btn btn-default">回到首页</a>
+{% endblock header-info %}
+
+{% block content %}
+
+    <form action="{% url 'crud:add_book' %}" method="post" novalidate>
+
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_title">{{ form.title.label }}</label>
+            {{ form.title }}
+            <span class="error_info">{{ form.title.errors.0 }}</span>
+        </div>
+
+
+        <div class="form-group">
+            <label for="id_price">{{ form.price.label }}</label>
+            {{ form.price }}
+            <span class="error_info">{{ form.price.errors.0 }}</span>
+        </div>
+
+        <div class="form-group">
+            <label for="id_pub_date">{{ form.pub_date.label }}</label>
+            {{ form.pub_date }}
+            <span class="error_info">{{ form.pub_date.errors.0 }}</span>
+        </div>
+
+
+        <div class="form-group">
+            <label for="id_publish">{{ form.publish.label }}</label>
+            {{ form.publish }}
+            <span class="error_info">{{ form.publish.errors.0 }}</span>
+        </div>
+
+        <div class="form-group">
+            <label for="id_authors">{{ form.authors.label }}</label>
+            {{ form.authors }}
+            <span class="error_info">{{ form.authors.errors.0 }}</span>
+        </div>
+
+        <input type="submit" value="提交" class="btn btn-default">
+    </form>
+{% endblock content %}

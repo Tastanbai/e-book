@@ -1,14 +1,147 @@
-<!-- success_page.html -->
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel='stylesheet'>
+</head>
+<body>
+    <h2>Hi,<span class="error_info">{{ request.user.username }}</span> Добро пожаловать в систему управления библиотекой</h2>
+    <span><a href="{% url "myapp:logout" %}">Выйти из системы</a></span>
+    <header class="d-flex justify-content-center py-3">
+        <ul class="nav nav-pills">
+          <li class="nav-item"><a href="{% url 'myapp:index' %}" class="nav-link">Библиотека</a></li>
+        </ul>
+      </header>
+    <div class="container">
+ <!-- Добавляем форму поиска здесь -->
+ <form method="get" action="{% url 'myapp:index' %}">
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Search for books..." name="q">
+        <button class="btn btn-outline-secondary" type="submit">Search</button>
+    </div>
+    <a href="#" class="btn btn-info btn_vertical">Добавить книги</a>  
+ {% comment %} {% url 'myapp:add_book' %}  {% endcomment %}
+<table id="table" class="table table-bordered table-striped">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>BBK</th>
+        <th>Quantity</th>
+        <th>Balance_quantity</th>
+        <th>Edit</th>
+        <th>delete</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for book in books %}
+        <tr>
+            <td>{{ book.id }}</td>
+            <td>{{ book.name }}</td>
+            <td>{{ book.bbk}}</td>
+            <td>{{ book.quantity }}</td>
+            <td>{{ book.balance_quantity }}</td>
+            <td>
+                {% for author in book.authors.all %}
+                    {% if forloop.last %}
+                        <span>{{ author.name }}</span>
+                    {% else %}
+                        <span>{{ author.name }},</span>
+                    {% endif %}
+
+                {% endfor %}
+            </td>
+            <td><a href="edit/{{ book.pk }}/book">编辑</a></td>
+            <td><a href="delete/{{ book.pk }}/book">删除</a></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+    </div>
+</body>
+</html> 
+
+
+{% comment %} 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Success Page</title>
+        <title>Home</title>
+        <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="/static/css/common.css">
 </head>
 <body>
-    <h1>Form Submitted Successfully!</h1>
-    <p>Thank you for your submission.</p>
+
+    <a href="#" class="btn btn-info btn_vertical">添加书籍</a>  
+     {% url 'myapp:add_book' %} 
+    <table id="table" class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>BBK</th>
+            <th>quantity</th>
+            <th>balance_quantity</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for book in books %}
+            <tr>
+                <td>{{ book.id }}</td>
+                <td>{{ book.name }}</td>
+                <td>{{ book.bbk}}</td>
+                <td>{{ book.quantity }}</td>
+                <td>{{ book.balance_quantity }}</td>
+                <td>
+                    {% for author in book.authors.all %}
+                        {% if forloop.last %}
+                            <span>{{ author.name }}</span>
+                        {% else %}
+                            <span>{{ author.name }},</span>
+                        {% endif %}
+    
+                    {% endfor %}
+                </td>
+                <td><a href="edit/{{ book.pk }}/book">编辑</a></td>
+                <td><a href="delete/{{ book.pk }}/book">删除</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% include 'paginator.html' %} 
 </body>
-</html>
+</html> {% endcomment %}
+
+
+
+{% comment %} {% include 'paginator.html' %}  {% endcomment %}
+
+{% comment %} 
+
+</form>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">BBK</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Balance quantity</th>
+        </tr>
+    </thead>
+<!-- index.html -->
+<tbody>
+{% for book in books %}
+    <tr>
+        <td>{{ book.id }}</td>
+        <td>{{ book.name }}</td>
+        <td>{{ book.bbk }}</td>
+        <td>{{ book.quantity }}</td>
+        <td>{{ book.balance_quantity }}</td>
+    </tr>
+{% endfor %}
+</tbody>
+</table> {% endcomment %}
