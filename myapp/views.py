@@ -3,6 +3,7 @@ from .forms import LoginForm
 from django.contrib.auth import authenticate, login as auth_login
 from .models import Book
 from django.contrib import auth
+from .forms import BookForm
 
 from django.urls import reverse
 def user_login(request):
@@ -23,6 +24,28 @@ def logout(request):
     auth.logout(request)
     return redirect(reverse('myapp:login'))
 
-
 def index(request):
-    return render(request, 'myapp/index.html')
+    books = Book.objects.all()
+    return render(request, 'myapp/index.html', {'books': books})
+
+def delete_book(request, id):
+    Book.objects.filter(id=id).delete()
+    return redirect(reverse('myapp:index'))
+
+def add_book(request):
+    if request.method == 'POST':
+        form = BookForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect(reverse('myapp:index'))
+        context = {
+            'form': form
+        }
+        return render(request, 'book/add_book.html', context=context)
+
+    form = BookForm()
+
+    context = {
+        'form': form,
+    }
+    return render(request, 'myapp/add_book.html', context=context)

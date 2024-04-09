@@ -20,8 +20,7 @@
         <input type="text" class="form-control" placeholder="Search for books..." name="q">
         <button class="btn btn-outline-secondary" type="submit">Search</button>
     </div>
-    <a href="#" class="btn btn-info btn_vertical">Добавить книги</a>  
- {% comment %} {% url 'myapp:add_book' %}  {% endcomment %}
+    <a href="{% url 'myapp:add_book' %}" class="btn btn-info btn_vertical">Добавить книги</a>  
 <table id="table" class="table table-bordered table-striped">
     <thead>
     <tr>
@@ -42,18 +41,8 @@
             <td>{{ book.bbk}}</td>
             <td>{{ book.quantity }}</td>
             <td>{{ book.balance_quantity }}</td>
-            <td>
-                {% for author in book.authors.all %}
-                    {% if forloop.last %}
-                        <span>{{ author.name }}</span>
-                    {% else %}
-                        <span>{{ author.name }},</span>
-                    {% endif %}
-
-                {% endfor %}
-            </td>
-            <td><a href="edit/{{ book.pk }}/book">编辑</a></td>
-            <td><a href="delete/{{ book.pk }}/book">删除</a></td>
+            <td><a href="edit/{{ book.pk }}/book">Edit</a></td>
+            <td><a href="delete/{{ book.pk }}/book">Delete</a></td>
         </tr>
     {% endfor %}
     </tbody>

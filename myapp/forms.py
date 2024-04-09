@@ -29,3 +29,46 @@ class LoginForm(forms.Form):
             }
         )
     )
+
+
+from django.forms import TextInput, NumberInput
+from .models import Book
+
+class BookForm(forms.ModelForm):
+    class Meta:
+        model = Book
+        fields = (
+            'id', 'name', 'bbk', 'quantity', 'balance_quantity'
+        )
+
+        labels = {
+            'id': 'ID',
+            'name': 'Название',
+            'bbk': 'ББК',
+            'quantity': 'Количество',
+            'balance_quantity': 'Остаток'
+        }
+        widgets = {
+            'id': TextInput(attrs={'class': 'form-control'}),
+            'name': TextInput(attrs={'class': 'form-control'}),
+            'bbk': TextInput(attrs={'class': 'form-control'}),
+            'quantity': NumberInput(attrs={'class': 'form-control'}),
+            'balance_quantity': NumberInput(attrs={'class': 'form-control'})
+        }
+
+        error_messages = {
+            'name': {
+                "required": "Название книги не может быть пустым",
+                'max_length': "Название не может превышать 100 символов",
+            },
+            'bbk': {
+                "required": "Поле ББК не может быть пустым",
+            },
+            'quantity': {
+                "required": "Пожалуйста, укажите количество",
+            },
+            'balance_quantity': {
+                "required": "Поле остаток не может быть пустым",
+            }
+        }
+
