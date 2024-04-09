@@ -16,4 +16,8 @@
 .header-info{
     margin-left:15px;
 }
+.sorting-controls a.active {
+        color: red; /* Или любой другой стиль для выделения */
+}
+
 

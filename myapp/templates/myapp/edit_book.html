@@ -1,51 +1,72 @@
 {% extends 'base.html' %}
 
+
 {% block title %}
-    <title>Добавление книги</title>
+    <title>Редактирование книги</title>
 {% endblock title %}
 
 {% block header-info %}
-    <h3>Добавление книги</h3>
+    <h3>Редактирование книги</h3>
     <a href="{% url 'myapp:index' %}" class="btn btn-default">Вернуться на главную</a>
 {% endblock header-info %}
 
 {% block content %}
-
-    <form action="{% url 'myapp:add_book' %}" method="post" novalidate>
+    <form id="fm">
         {% csrf_token %}
-        
-        <div class="form-group">
-            <label for="id_id">{{ form.id.label }}</label>
-            {{ form.id }}
-            <span class="error_info">{{ form.id.errors.0 }}</span>
-        </div>
-
+        <span id="error"></span>
         <div class="form-group">
             <label for="id_name">{{ form.name.label }}</label>
             {{ form.name }}
             <span class="error_info">{{ form.name.errors.0 }}</span>
         </div>
-
+        
         <div class="form-group">
             <label for="id_bbk">{{ form.bbk.label }}</label>
             {{ form.bbk }}
             <span class="error_info">{{ form.bbk.errors.0 }}</span>
         </div>
-
+        
         <div class="form-group">
             <label for="id_quantity">{{ form.quantity.label }}</label>
             {{ form.quantity }}
             <span class="error_info">{{ form.quantity.errors.0 }}</span>
         </div>
-
+        
         <div class="form-group">
             <label for="id_balance_quantity">{{ form.balance_quantity.label }}</label>
             {{ form.balance_quantity }}
             <span class="error_info">{{ form.balance_quantity.errors.0 }}</span>
         </div>
-
-        <input type="submit" value="Отправить" class="btn btn-default">
+        
+        <input type="button" value="submit" class="btn btn-default" id="edit-book">
     </form>
-
 {% endblock content %}
 
+
+{% block script %}
+    <script src="/static/js/jquery-3.2.1.min.js"></script>
+    <script>
+        $('#edit-book').click(function () {
+            $.ajax({
+                url: '',
+                type: 'post',
+                dataType: 'JSON',
+                data: $('#fm').serialize(),
+                success: function (data) {
+                    if (data.status === 'true') {
+                        window.location.href = '/';
+                    } else {
+                        $('#error').html(data.message).css({
+                            'color': 'red',
+                            'font-size': '18px',
+                            'font-weight': 'bolder'
+                        });
+                    }
+                }
+            })
+        });
+
+        // 设置title不可编辑
+        $('#id_title').attr('readonly', true);
+    </script>
+{% endblock script %}
