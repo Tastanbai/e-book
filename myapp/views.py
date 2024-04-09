@@ -4,6 +4,11 @@ from .forms import LoginForm
 from django.contrib.auth import authenticate, login as auth_login
 from .models import Book
 from django.contrib import auth
+<<<<<<< HEAD
+=======
+from .forms import BookForm
+
+>>>>>>> 3b13b4a057f2d51f1c03a6639e419845b1f5e539
 from django.urls import reverse
 from .forms import BookForm
 
@@ -25,6 +30,7 @@ def logout(request):
     auth.logout(request)
     return redirect(reverse('myapp:login'))
 
+<<<<<<< HEAD
 
 # def index(request):
 #     books = Book.objects.all()
@@ -51,6 +57,15 @@ def index(request):
         books = books.order_by(sort)
 
     return render(request, 'myapp/index.html', {'books': books, 'current_sort': sort})
+=======
+def index(request):
+    books = Book.objects.all()
+    return render(request, 'myapp/index.html', {'books': books})
+
+def delete_book(request, id):
+    Book.objects.filter(id=id).delete()
+    return redirect(reverse('myapp:index'))
+>>>>>>> 3b13b4a057f2d51f1c03a6639e419845b1f5e539
 
 def add_book(request):
     if request.method == 'POST':
@@ -68,6 +83,7 @@ def add_book(request):
     context = {
         'form': form,
     }
+<<<<<<< HEAD
     return render(request, 'myapp/add_book.html', context=context)
 
 def edit_book(request, id):
@@ -94,3 +110,6 @@ def edit_book(request, id):
 def delete_book(request, id):
     Book.objects.filter(id=id).delete()
     return redirect(reverse('myapp:index'))
+=======
+    return render(request, 'myapp/add_book.html', context=context)
+>>>>>>> 3b13b4a057f2d51f1c03a6639e419845b1f5e539

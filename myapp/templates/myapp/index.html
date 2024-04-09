@@ -20,6 +20,7 @@
         <button class="btn btn-outline-secondary" type="submit">Search</button>
     </div>
     <a href="{% url 'myapp:add_book' %}" class="btn btn-info btn_vertical">Добавить книги</a>  
+<<<<<<< HEAD
 
     <div  class="btn btn-info btn_vertical">
         <a href="{% url 'myapp:index' %}?sort=name" class="{% if current_sort == 'name' %}active{% endif %}">Сортировать по имени</a> |
@@ -29,6 +30,8 @@
     
     
     
+=======
+>>>>>>> 3b13b4a057f2d51f1c03a6639e419845b1f5e539
 <table id="table" class="table table-bordered table-striped">
     <thead>
     <tr>
@@ -49,8 +52,13 @@
             <td>{{ book.bbk}}</td>
             <td>{{ book.quantity }}</td>
             <td>{{ book.balance_quantity }}</td>
+<<<<<<< HEAD
             <td><a href="edit/{{ book.pk }}/book">Редактировать</a></td>
             <td><a href="delete/{{ book.pk }}/book">Удалить</a></td>
+=======
+            <td><a href="edit/{{ book.pk }}/book">Edit</a></td>
+            <td><a href="delete/{{ book.pk }}/book">Delete</a></td>
+>>>>>>> 3b13b4a057f2d51f1c03a6639e419845b1f5e539
         </tr>
     {% endfor %}
     </tbody>

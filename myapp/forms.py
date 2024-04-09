@@ -30,6 +30,10 @@ class LoginForm(forms.Form):
         )
     )
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3b13b4a057f2d51f1c03a6639e419845b1f5e539
 from django.forms import TextInput, NumberInput
 from .models import Book
 
@@ -70,3 +74,7 @@ class BookForm(forms.ModelForm):
                 "required": "Поле остаток не может быть пустым",
             }
         }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3b13b4a057f2d51f1c03a6639e419845b1f5e539
