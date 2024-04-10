@@ -1,0 +1,35 @@
+<a href="{% url 'myapp:add_book' %}" class="btn btn-info btn_vertical">Добавить книги</a>  
+<div  class="btn btn-info btn_vertical">
+    <a href="{% url 'myapp:index' %}?sort=id" class="{% if current_sort == 'id' %}active{% endif %}">Сортировать по id</a> |
+    <a href="{% url 'myapp:index' %}?sort=name" class="{% if current_sort == 'name' %}active{% endif %}">Сортировать по имени</a> |
+    <a href="{% url 'myapp:index' %}?sort=quantity" class="{% if current_sort == 'quantity' %}active{% endif %}">Сортировать по количеству</a> |
+    <a href="{% url 'myapp:index' %}?sort=balance_quantity" class="{% if current_sort == 'balance_quantity' %}active{% endif %}">Сортировать по доступному количеству</a>
+</div>
+
+
+<table id="table" class="table table-bordered table-striped">
+<thead>
+<tr>
+    <th>Id</th>
+    <th>Name</th>
+    <th>BBK</th>
+    <th>Quantity</th>
+    <th>Balance_quantity</th>
+    <th>Edit</th>
+    <th>delete</th>
+</tr>
+</thead>
+<tbody>
+{% for book in books %}
+    <tr>
+        <td>{{ book.id }}</td>
+        <td>{{ book.name }}</td>
+        <td>{{ book.bbk}}</td>
+        <td>{{ book.quantity }}</td>
+        <td>{{ book.balance_quantity }}</td>
+        <td><a href="edit/{{ book.pk }}/book">Редактировать</a></td>
+        <td><a href="delete/{{ book.pk }}/book">Удалить</a></td>
+    </tr>
+{% endfor %}
+</tbody>
+</table>

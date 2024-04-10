@@ -1,0 +1,73 @@
+<a href="{% url 'myapp:add_publish' %}" class="btn btn-info btn_vertical">Прокат книг</a>
+<table id="table" class="table table-bordered table-striped">
+    <thead>
+    <tr>
+        <th>ФИО</th>
+        <th>Адрес</th>
+        <th>Электронная почта</th>
+        <th>Номер</th>
+        <th>Книга</th>
+        <th>Количество</th>
+        <th>Удалить</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    {% for publish in publish_list %}
+        <tr>
+            <td>{{ publish.name }}</td>
+            <td>{{ publish.city }}</td>
+            <td>{{ publish.email }}</td>
+            <td>{{ publish.phone }}</td>
+            <td>{{ publish.book }}</td>
+            <td>{{ publish.quantity }}</td>
+            <td>
+            <a href="{% url 'myapp:index' %}" onclick="confirmDelete('{{ publish.id }}');" class="delete-btn">Удалить</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    function confirmDelete(publishId) {
+        if (confirm("Вы уверены, что хотите удалить эту запись?")) {
+            fetch(`/return_book/${publishId}/`, {
+                method: 'POST', // Или 'DELETE', если ваш сервер поддерживает этот метод для удаления
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'), // Получение CSRF токена из cookies
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 'id': publishId })
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json(); // Предполагаем, что сервер возвращает JSON
+                }
+                throw new Error('Что-то пошло не так при удалении.');
+            })
+            .then(data => {
+                console.log(data); // Обработка данных ответа, если необходимо
+                document.getElementById(`row-${publishId}`).remove(); // Удаление строки из таблицы
+            })
+            .catch(error => console.error('Ошибка:', error));
+        }
+    }
+    
+    // Функция для получения значения cookie по имени
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                const cookiePart = cookie.trim().split('=');
+                if (cookiePart[0] === name) {
+                    cookieValue = decodeURIComponent(cookiePart[1]);
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    </script>
+    

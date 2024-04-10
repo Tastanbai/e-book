@@ -1,14 +1,9 @@
 import json
-from django.shortcuts import render, redirect, HttpResponse
-from .forms import LoginForm
+from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
+from .forms import LoginForm, RegForm
 from django.contrib.auth import authenticate, login as auth_login
 from .models import Book
 from django.contrib import auth
-<<<<<<< HEAD
-=======
-from .forms import BookForm
-
->>>>>>> 3b13b4a057f2d51f1c03a6639e419845b1f5e539
 from django.urls import reverse
 from .forms import BookForm
 
@@ -30,7 +25,6 @@ def logout(request):
     auth.logout(request)
     return redirect(reverse('myapp:login'))
 
-<<<<<<< HEAD
 
 # def index(request):
 #     books = Book.objects.all()
@@ -44,6 +38,7 @@ def index(request):
 
     # Получаем все книги
     books = Book.objects.all()
+    publish_list = Publish.objects.all() 
 
     # Фильтруем книги по поисковому запросу, если он предоставлен
     if search_query:
@@ -56,16 +51,7 @@ def index(request):
     if sort in ['name', 'quantity', 'balance_quantity', 'bbk', 'id']:
         books = books.order_by(sort)
 
-    return render(request, 'myapp/index.html', {'books': books, 'current_sort': sort})
-=======
-def index(request):
-    books = Book.objects.all()
-    return render(request, 'myapp/index.html', {'books': books})
-
-def delete_book(request, id):
-    Book.objects.filter(id=id).delete()
-    return redirect(reverse('myapp:index'))
->>>>>>> 3b13b4a057f2d51f1c03a6639e419845b1f5e539
+    return render(request, 'myapp/index.html', {'books': books, 'current_sort': sort, 'publish_list': publish_list})
 
 def add_book(request):
     if request.method == 'POST':
@@ -83,7 +69,6 @@ def add_book(request):
     context = {
         'form': form,
     }
-<<<<<<< HEAD
     return render(request, 'myapp/add_book.html', context=context)
 
 def edit_book(request, id):
@@ -110,6 +95,82 @@ def edit_book(request, id):
 def delete_book(request, id):
     Book.objects.filter(id=id).delete()
     return redirect(reverse('myapp:index'))
-=======
-    return render(request, 'myapp/add_book.html', context=context)
->>>>>>> 3b13b4a057f2d51f1c03a6639e419845b1f5e539
+
+
+from django.contrib.auth.models import User
+
+def reg(request):
+    if request.method == 'POST':
+        form = RegForm(request.POST)
+        if form.is_valid():
+            name = request.POST.get('name')
+            pwd = request.POST.get('pwd')
+            r_pwd = request.POST.get('r_pwd')
+            email = request.POST.get('email')
+
+            User.objects.create_user(
+                username=name,
+                password=pwd,
+                email=email,
+            )
+
+            return redirect('/')
+        errors = form.errors.get('__all__')
+
+        context = {
+            'form': form,
+            'errors': errors
+        }
+
+        return render(request, 'myapp/reg.html', context=context)
+    form = RegForm()
+    context = {
+        'form': form
+    }
+
+    return render(request, 'myapp/reg.html', context=context)
+
+from .forms import PublishForm
+from .models import Publish
+
+
+def add_publish(request):
+    if request.method == 'POST':
+        form = PublishForm(request.POST)
+        if form.is_valid():
+            # Извлекаем книгу и запрошенное количество из данных формы
+            book = form.cleaned_data['book']
+            quantity_requested = form.cleaned_data['quantity']
+            
+            # Проверяем, достаточно ли книг в наличии
+            if book.balance_quantity >= quantity_requested:
+                form.save()
+                return redirect(reverse('myapp:index'))
+            else:
+                # Если запрошенное количество превышает доступное, добавляем ошибку к форме
+                form.add_error('quantity', f"Только {book.balance_quantity} книг(и) доступно. Вы не можете взять {quantity_requested} книг(и).")
+        
+        # Если форма не валидна или есть ошибки в количестве, рендерим форму снова с ошибками
+        context = {
+            'form': form
+        }
+        return render(request, 'myapp/add_publish.html', context=context)
+    
+    # Для GET-запроса просто отображаем пустую форму
+    else:
+        form = PublishForm()
+        context = {
+            'form': form,
+        }
+        return render(request, 'myapp/add_publish.html', context=context)
+    
+
+
+
+def return_book(request, publish_id):
+    # Получаем объект Publish по ID или возвращаем 404 ошибку, если такого нет
+    publish = get_object_or_404(Publish, id=publish_id)
+    # Удаляем объект, сигнал post_delete автоматически обновит balance_quantity
+    publish.delete()
+    # Перенаправляем пользователя на предыдущую страницу или главную страницу
+    return redirect('myapp:index')

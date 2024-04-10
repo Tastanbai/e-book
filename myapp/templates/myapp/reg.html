@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    <title>Страница входа в систему</title>
+    <title>Регистрация</title>
 {% endblock title %}
 
 {% block header-info %}
-    <h1 class="text-center">Login</h1>
+    <h1 class="text-center">Регистрация</h1>
 {% endblock header-info %}
 
 {% block content %}
-    <form action="{% url 'myapp:login' %}" method="post" novalidate>
+    <form action="{% url 'myapp:reg' %}" method="post" novalidate>
         {% csrf_token %}
         <div class="form-group">
             <label for="id_name">{{ form.name.label }}</label>
@@ -22,14 +22,25 @@
             <label for="id_pwd">{{ form.pwd.label }}</label>
             {{ form.pwd }}
             <span class="error_info">{{ form.pwd.errors.0 }}</span>
+        </div>
+
+
+        <div class="form-group">
+            <label for="id_r_pwd">{{ form.r_pwd.label }}</label>
+            {{ form.r_pwd }}
+            <span class="error_info">{{ form.r_pwd.errors.0 }}</span>
             <span class="error_info">{{ errors.0 }}</span>
         </div>
 
-        <div class="form-check">
-            <input type="checkbox" name="agree" id="agree" required>
-            <label for="agree">Я согласен на обработку персональных данных в соответствии с <a href="https://armada-service.kz/policy">Политикой конфиденциальности</a>.</label>
+        <div class="form-group">
+            <label for="id_email">{{ form.email.label }}</label>
+            {{ form.email }}
+            <span class="error_info">{{ form.email.errors.0 }}</span>
         </div>
 
-        <input type="submit" value="Submit" class="btn btn-primary">
+        <input type="submit" value="提交" class="btn btn-primary">
+
     </form>
 {% endblock content %}
+
+
