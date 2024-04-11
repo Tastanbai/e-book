@@ -26,13 +26,11 @@ def logout(request):
     return redirect(reverse('myapp:login'))
 
 
-# def index(request):
-#     books = Book.objects.all()
-#     return render(request, 'myapp/index.html', {'books': books})
-
 from django.db.models import Q
 
 def index(request):
+    if not request.user.is_authenticated:
+        return redirect('myapp:login')
     sort = request.GET.get('sort', 'name')  # Устанавливаем 'name' как значение по умолчанию для сортировки
     search_query = request.GET.get('q', '')  # Получаем поисковый запрос
 
