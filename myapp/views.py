@@ -36,7 +36,7 @@ def index(request):
 
     # Получаем все книги
     books = Book.objects.all()
-    publish_list = Publish.objects.all() 
+    
 
     # Фильтруем книги по поисковому запросу, если он предоставлен
     if search_query:
@@ -49,7 +49,7 @@ def index(request):
     if sort in ['name', 'quantity', 'balance_quantity', 'bbk', 'id']:
         books = books.order_by(sort)
 
-    return render(request, 'myapp/index.html', {'books': books, 'current_sort': sort, 'publish_list': publish_list})
+    return render(request, 'myapp/index.html', {'books': books, 'current_sort': sort})
 
 def add_book(request):
     if request.method == 'POST':
@@ -143,7 +143,7 @@ def add_publish(request):
             # Проверяем, достаточно ли книг в наличии
             if book.balance_quantity >= quantity_requested:
                 form.save()
-                return redirect(reverse('myapp:index'))
+                return redirect(reverse('myapp:rent_book'))
             else:
                 # Если запрошенное количество превышает доступное, добавляем ошибку к форме
                 form.add_error('quantity', f"Только {book.balance_quantity} книг(и) доступно. Вы не можете взять {quantity_requested} книг(и).")
@@ -171,4 +171,25 @@ def return_book(request, publish_id):
     # Удаляем объект, сигнал post_delete автоматически обновит balance_quantity
     publish.delete()
     # Перенаправляем пользователя на предыдущую страницу или главную страницу
-    return redirect('myapp:index')
+    return redirect('myapp:rent_book')
+
+
+def rent_book(request):
+    # Получаем список всех записей о публикации
+    publish_list = Publish.objects.all()
+
+    # Получаем поисковой запрос из GET-параметра
+    search_query = request.GET.get('q', '')
+
+    # Фильтруем список публикаций по поисковому запросу, если он предоставлен
+    if search_query:
+        
+        publish_list = publish_list.filter(
+            Q(name__icontains=search_query) |
+            Q(city__icontains=search_query) |
+            Q(email__icontains=search_query) |
+            Q(phone__icontains=search_query) |
+            Q(book__name__icontains=search_query)  # Исправлено на поле в связанной модели
+        )
+
+    return render(request, 'myapp/rent_book.html', {'publish_list': publish_list})

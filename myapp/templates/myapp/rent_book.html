@@ -37,28 +37,23 @@
         </ul>
       </header>
 
-        <div class="container">
-            <div class="input-group mb-3">
-                <div class="container">
-                    <form method="GET" action="{% url 'myapp:index' %}" class="input-group mb-3">
-                        <input type="text" class="form-control" placeholder="Search for books..." name="q" value="{{ request.GET.q }}">
-                        <button class="btn btn-outline-secondary" type="submit">Search</button>
-                    </form>
-                </div>
-                
-
+      <div class="container">
+        <div class="input-group mb-3">
+            <div class="container">
+                <form method="GET" action="{% url 'myapp:rent_book' %}" class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Search for books..." name="q" value="{{ request.GET.q }}">
+                    <button class="btn btn-outline-secondary" type="submit">Search</button>
+                </form>
             </div>
+            
 
-            
-            
-            
-    
-                {% block content_books %}
-                    <!-- Книги -->
-                    {% include 'myapp/books.html' %}
-                {% endblock content_books %}
-            
-            
+        </div>
+                {% block content_publishers_authors %}
+                    <!-- Издатели и авторы -->
+                    {% include 'myapp/publishes.html' %}
+                {% endblock content_publishers_authors %}
+         
+
 
 
 <script>
@@ -75,7 +70,6 @@
             // Тут ваш код для AJAX-запроса или перезагрузки страницы
         });
     });
-    </script>
-    </div>
+    </script> 
 </body>
 </html> 

@@ -22,7 +22,7 @@
             <td>{{ publish.book }}</td>
             <td>{{ publish.quantity }}</td>
             <td>
-            <a href="{% url 'myapp:index' %}" onclick="confirmDelete('{{ publish.id }}');" class="delete-btn">Удалить</a>
+            <a href="{% url 'myapp:rent_book' %}" onclick="confirmDelete('{{ publish.id }}');" class="delete-btn">Удалить</a>
             </td>
         </tr>
     {% endfor %}

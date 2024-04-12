@@ -1,5 +1,5 @@
 <a href="{% url 'myapp:add_book' %}" class="btn btn-info btn_vertical">Добавить книги</a>  
-<div  class="btn btn-info btn_vertical">
+<div class="btn btn-info btn_vertical">
     <a href="{% url 'myapp:index' %}?sort=id" class="{% if current_sort == 'id' %}active{% endif %}">Сортировать по id</a> |
     <a href="{% url 'myapp:index' %}?sort=name" class="{% if current_sort == 'name' %}active{% endif %}">Сортировать по имени</a> |
     <a href="{% url 'myapp:index' %}?sort=quantity" class="{% if current_sort == 'quantity' %}active{% endif %}">Сортировать по количеству</a> |
