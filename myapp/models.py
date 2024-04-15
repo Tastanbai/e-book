@@ -1,8 +1,11 @@
 from django.db import models
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
+from django.conf import settings
+from sqlalchemy import null
 
 class Book(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=255, verbose_name='Название книги')
     bbk = models.CharField(max_length=100, verbose_name="BBK")
     quantity = models.IntegerField(verbose_name="Количество")
@@ -12,6 +15,7 @@ class Book(models.Model):
         return self.name
 
 class Publish(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='Пользователь', null=True)
     name = models.CharField(max_length=32, verbose_name='ФИО')
     city = models.CharField(max_length=32, verbose_name='Адрес')
     email = models.EmailField(verbose_name='Электронная почта')
