@@ -44,11 +44,12 @@ def index(request):
     if search_query:
         books = books.filter(
             Q(name__icontains=search_query) | 
-            Q(bbk__icontains=search_query)
+            Q(bbk__icontains=search_query)  |
+            Q(ISBN__icontains=search_query)
         )
 
     # Применяем сортировку
-    if sort in ['name', 'quantity', 'balance_quantity', 'bbk', 'id']:
+    if sort in ['name', 'quantity', 'balance_quantity', 'bbk' ]:
         books = books.order_by(sort)
 
     return render(request, 'myapp/index.html', {'books': books, 'current_sort': sort})
@@ -147,11 +148,10 @@ def reg(request):
 
 @login_required
 def add_publish(request):
-    user_books = Book.objects.filter(user=request.user)  # Получаем список книг, принадлежащих пользователю
-
+    user_books = Book.objects.filter(user=request.user)
     if request.method == 'POST':
         form = PublishForm(request.POST)
-        form.fields['book'].queryset = user_books  # Устанавливаем queryset для поля выбора книги
+        form.fields['book'].queryset = user_books
 
         if form.is_valid():
             book = form.cleaned_data['book']
@@ -161,12 +161,9 @@ def add_publish(request):
             if book.balance_quantity < quantity_requested:
                 form.add_error('quantity', f"Только {book.balance_quantity} книг доступно.")
                 return render(request, 'myapp/add_publish.html', {'form': form})
-
-            # Сохранение публикации и обновление остатка книг
+            
             publish_instance = form.save(commit=False)
             publish_instance.user = request.user
-            book.balance_quantity -= quantity_requested
-            book.save()
             publish_instance.save()
                 
             return redirect(reverse('myapp:rent_book'))
@@ -175,10 +172,10 @@ def add_publish(request):
     
     else:
         form = PublishForm()
-        form.fields['book'].queryset = user_books  # Также устанавливаем queryset при инициализации формы
-        return render(request, 'myapp/add_publish.html', {'form': form})
-
-
+        form.fields['book'].queryset = user_books
+        return render(request, 'myapp/add_publish.html', {'form': form}) 
+    
+    
 def return_book(request, publish_id):
     # Получаем объект Publish по ID или возвращаем 404 ошибку, если такого нет
     publish = get_object_or_404(Publish, id=publish_id)

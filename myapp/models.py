@@ -6,6 +6,7 @@ from sqlalchemy import null
 
 class Book(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
+    ISBN=models.CharField(max_length=255, verbose_name='Книжный номер', null=True)
     name = models.CharField(max_length=255, verbose_name='Название книги')
     bbk = models.CharField(max_length=100, verbose_name="BBK")
     quantity = models.IntegerField(verbose_name="Количество")
@@ -17,6 +18,7 @@ class Book(models.Model):
 class Publish(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='Пользователь', null=True)
     name = models.CharField(max_length=32, verbose_name='ФИО')
+    iin = models.CharField(max_length=12, verbose_name='ИИН', null=True)
     city = models.CharField(max_length=32, verbose_name='Адрес')
     email = models.EmailField(verbose_name='Электронная почта')
     phone = models.CharField(max_length=15, verbose_name='Номер')
@@ -33,28 +35,45 @@ class Publish(models.Model):
 
 from django.http import Http404
 
-@receiver(post_save, sender=Publish)
-def update_book_balance(sender, instance, **kwargs):
-    if kwargs.get('created', True):  # Если объект Publish только что создан
-        if instance.book.balance_quantity >= instance.quantity:  # Проверяем, достаточно ли книг
-            instance.book.balance_quantity -= instance.quantity  # Вычитаем количество книг из остатка
-            instance.book.save()  # Сохраняем изменения в остатке книг
-        else:
-            # Вместо выбрасывания исключения вызываем Http404 с сообщением
-            raise Http404("Недостаточно книг в наличии")
-    else:
-        # Для редактирования существующих записей Publish
-        old_instance = Publish.objects.get(pk=instance.pk)
-        new_balance = instance.book.balance_quantity + old_instance.quantity - instance.quantity
-        if new_balance >= 0:
-            instance.book.balance_quantity = new_balance
-            instance.book.save()
-        else:
-            raise Http404("Недостаточно книг в наличии")
+# @receiver(post_save, sender=Publish)
+# def update_book_balance(sender, instance, **kwargs):
+#     if kwargs.get('created', True):  # Если объект Publish только что создан
+#         if instance.book.balance_quantity >= instance.quantity:  # Проверяем, достаточно ли книг
+#             instance.book.balance_quantity -= instance.quantity  # Вычитаем количество книг из остатка
+#             instance.book.save()  # Сохраняем изменения в остатке книг
+#         else:
+#             # Вместо выбрасывания исключения вызываем Http404 с сообщением
+#             raise Http404("Недостаточно книг в наличии")
+#     else:
+#         # Для редактирования существующих записей Publish
+#         old_instance = Publish.objects.get(pk=instance.pk)
+#         new_balance = instance.book.balance_quantity + old_instance.quantity - instance.quantity
+#         if new_balance >= 0:
+#             instance.book.balance_quantity = new_balance
+#             instance.book.save()
+#         else:
+#             raise Http404("Недостаточно книг в наличии")
 
+
+# @receiver(post_delete, sender=Publish)
+# def restore_book_balance(sender, instance, **kwargs):
+#     # Увеличиваем balance_quantity на количество возвращенных книг
+#     instance.book.balance_quantity += instance.quantity
+#     instance.book.save()
+
+@receiver(post_save, sender=Publish)
+def update_book_balance(sender, instance, created, **kwargs):
+    if created:
+        book = instance.book
+        quantity = instance.quantity
+        if book.balance_quantity >= quantity:
+            book.balance_quantity -= quantity
+            book.save()
+        else:
+            raise Http404("Недостаточно книг в наличии")
 
 @receiver(post_delete, sender=Publish)
 def restore_book_balance(sender, instance, **kwargs):
-    # Увеличиваем balance_quantity на количество возвращенных книг
-    instance.book.balance_quantity += instance.quantity
-    instance.book.save()
+    book = instance.book
+    book.balance_quantity += instance.quantity
+    book.save()

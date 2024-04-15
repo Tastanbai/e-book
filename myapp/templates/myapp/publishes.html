@@ -3,6 +3,7 @@
     <thead>
     <tr>
         <th>ФИО</th>
+        <th>ИИН</th>
         <th>Адрес</th>
         <th>Электронная почта</th>
         <th>Номер</th>
@@ -16,6 +17,7 @@
     {% for publish in publish_list %}
         <tr>
             <td>{{ publish.name }}</td>
+            <td>{{ publish.iin }}</td>
             <td>{{ publish.city }}</td>
             <td>{{ publish.email }}</td>
             <td>{{ publish.phone }}</td>

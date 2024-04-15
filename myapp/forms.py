@@ -37,18 +37,18 @@ class BookForm(forms.ModelForm):
     class Meta:
         model = Book
         fields = (
-            'id', 'name', 'bbk', 'quantity', 'balance_quantity'
+            'id', 'ISBN', 'name', 'bbk', 'quantity', 'balance_quantity'
         )
 
         labels = {
-            'id': 'ID',
+            'ISBN': 'ISBN',
             'name': 'Название',
             'bbk': 'ББК',
             'quantity': 'Количество',
             'balance_quantity': 'Остаток'
         }
         widgets = {
-            'id': TextInput(attrs={'class': 'form-control'}),
+            'ISBN': TextInput(attrs={'class': 'form-control'}),
             'name': TextInput(attrs={'class': 'form-control'}),
             'bbk': TextInput(attrs={'class': 'form-control'}),
             'quantity': NumberInput(attrs={'class': 'form-control'}),
@@ -67,6 +67,9 @@ class BookForm(forms.ModelForm):
                 "required": "Пожалуйста, укажите количество",
             },
             'balance_quantity': {
+                "required": "Поле остаток не может быть пустым",
+            },
+            'ISBN': {
                 "required": "Поле остаток не может быть пустым",
             }
         }
@@ -160,11 +163,12 @@ class PublishForm(forms.ModelForm):
     class Meta:
         model = Publish
         fields = (
-            'name', 'city', 'email', 'phone', 'book', 'quantity'
+            'name', 'iin', 'city', 'email', 'phone', 'book', 'quantity'
         )
 
         labels = {
             'name': 'ФИО',
+            'iin': 'ИИН',
             'city': 'Адрес',
             'email': 'Электронная почта',
             'phone': 'Номер',
@@ -173,6 +177,7 @@ class PublishForm(forms.ModelForm):
         }
         widgets = {
             'name': TextInput(attrs={'class': 'form-control'}),
+            'iin': TextInput(attrs={'class': 'form-control'}),
             'city': TextInput(attrs={'class': 'form-control'}),
             'email': TextInput(attrs={'class': 'form-control'}),
             'phone': TextInput(attrs={'class': 'form-control'}),
@@ -185,7 +190,10 @@ class PublishForm(forms.ModelForm):
                 'max_length': "Не может превышать 32 символа",
                 "required": "Это поле обязательно для заполнения",
             },
-
+            'iin': {
+                'max_length': "Не может превышать 12 символов",  # Сообщение об ошибке для ИИН
+                "required": "Это поле обязательно для заполнения",
+            },
             'city': {
                 'max_length': ("Не может превышать 32 символа"),
                 "required": "Это поле обязательно для заполнения",
