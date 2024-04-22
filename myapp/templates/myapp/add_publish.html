@@ -26,6 +26,18 @@
         </div>
 
         <div class="form-group">
+            <label for="id_date_out">{{ form.date_out.label }}</label>
+            {{ form.date_out }}
+            <span class="error_info">{{ form.date_out.errors.0 }}</span>
+        </div>
+        
+        <div class="form-group">
+            <label for="id_date_in">{{ form.date_in.label }}</label>
+            {{ form.date_in }}
+            <span class="error_info">{{ form.date_in.errors.0 }}</span>
+        </div>
+        
+        <div class="form-group">
             <label for="id_city">{{ form.city.label }}</label>
             {{ form.city }}
             <span class="error_info">{{ form.city.errors.0 }}</span>

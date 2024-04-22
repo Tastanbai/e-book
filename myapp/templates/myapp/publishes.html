@@ -1,9 +1,12 @@
 <a href="{% url 'myapp:add_publish' %}" class="btn btn-info btn_vertical">Прокат книг</a>
+
 <table id="table" class="table table-bordered table-striped">
     <thead>
     <tr>
         <th>ФИО</th>
         <th>ИИН</th>
+        <th>Дата выдачи</th>
+        <th>Дата возврата</th>
         <th>Адрес</th>
         <th>Электронная почта</th>
         <th>Номер</th>
@@ -18,6 +21,8 @@
         <tr>
             <td>{{ publish.name }}</td>
             <td>{{ publish.iin }}</td>
+            <td>{{publish.date_out}}</td>
+            <td>{{publish.date_in}}</td>
             <td>{{ publish.city }}</td>
             <td>{{ publish.email }}</td>
             <td>{{ publish.phone }}</td>

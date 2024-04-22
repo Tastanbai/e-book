@@ -2,11 +2,12 @@ from django.db import models
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.conf import settings
-from sqlalchemy import null
+from django.utils import timezone
 
 class Book(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
     ISBN=models.CharField(max_length=255, verbose_name='Книжный номер', null=True)
+    author = models.CharField(max_length=255, verbose_name='Автор', null=True)
     name = models.CharField(max_length=255, verbose_name='Название книги')
     bbk = models.CharField(max_length=100, verbose_name="BBK")
     quantity = models.IntegerField(verbose_name="Количество")
@@ -19,6 +20,8 @@ class Publish(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='Пользователь', null=True)
     name = models.CharField(max_length=32, verbose_name='ФИО')
     iin = models.CharField(max_length=12, verbose_name='ИИН', null=True)
+    date_out = models.DateField(null=True)
+    date_in = models.DateField(null=True)
     city = models.CharField(max_length=32, verbose_name='Адрес')
     email = models.EmailField(verbose_name='Электронная почта')
     phone = models.CharField(max_length=15, verbose_name='Номер')
@@ -31,6 +34,12 @@ class Publish(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def is_overdue(self):
+        """Проверяет, истекла ли дата возврата."""
+        if self.date_in and self.date_in < timezone.now().date():
+            return True
+        return False
 
 
 from django.http import Http404

@@ -1,5 +1,6 @@
+from MySQLdb import Date
 from django import forms
-from django.forms import Select, widgets
+from django.forms import Select, widgets, DateInput
 
 class LoginForm(forms.Form):
     name = forms.CharField(
@@ -37,7 +38,7 @@ class BookForm(forms.ModelForm):
     class Meta:
         model = Book
         fields = (
-            'id', 'ISBN', 'name', 'bbk', 'quantity', 'balance_quantity'
+            'id', 'ISBN', 'name', 'bbk', 'quantity', 'balance_quantity', 'author'
         )
 
         labels = {
@@ -45,11 +46,13 @@ class BookForm(forms.ModelForm):
             'name': 'Название',
             'bbk': 'ББК',
             'quantity': 'Количество',
-            'balance_quantity': 'Остаток'
+            'balance_quantity': 'Остаток',
+            'author': 'Автор' 
         }
         widgets = {
             'ISBN': TextInput(attrs={'class': 'form-control'}),
             'name': TextInput(attrs={'class': 'form-control'}),
+            'author': TextInput(attrs={'class': 'form-control'}),
             'bbk': TextInput(attrs={'class': 'form-control'}),
             'quantity': NumberInput(attrs={'class': 'form-control'}),
             'balance_quantity': NumberInput(attrs={'class': 'form-control'})
@@ -58,6 +61,10 @@ class BookForm(forms.ModelForm):
         error_messages = {
             'name': {
                 "required": "Название книги не может быть пустым",
+                'max_length': "Название не может превышать 100 символов",
+            },
+             'author': {
+                "required": "Название автор не может быть пустым",
                 'max_length': "Название не может превышать 100 символов",
             },
             'bbk': {
@@ -163,7 +170,7 @@ class PublishForm(forms.ModelForm):
     class Meta:
         model = Publish
         fields = (
-            'name', 'iin', 'city', 'email', 'phone', 'book', 'quantity'
+            'name', 'iin', 'city', 'email', 'phone', 'book', 'quantity', 'date_out', 'date_in'
         )
 
         labels = {
@@ -173,7 +180,9 @@ class PublishForm(forms.ModelForm):
             'email': 'Электронная почта',
             'phone': 'Номер',
             'book': 'Книга',
-            'quantity': 'Количество'
+            'quantity': 'Количество',
+            'date_out': 'Дата выдачи',  
+            'date_in': 'Время возврата'
         }
         widgets = {
             'name': TextInput(attrs={'class': 'form-control'}),
@@ -182,7 +191,9 @@ class PublishForm(forms.ModelForm):
             'email': TextInput(attrs={'class': 'form-control'}),
             'phone': TextInput(attrs={'class': 'form-control'}),
             'book': Select(attrs={'class': 'form-control'}),
-            'quantity': NumberInput(attrs={'class': 'form-control'})
+            'quantity': NumberInput(attrs={'class': 'form-control'}),
+            'date_out': DateInput(attrs={'class': 'form-control', 'type': 'date'}),  
+            'date_in': DateInput(attrs={'class': 'form-control', 'type': 'date'})
         }
 
         error_messages = {
@@ -208,6 +219,14 @@ class PublishForm(forms.ModelForm):
             },
             'quantity': {
                 'invalid': 'Неправильное количество',
+                "required": "Это поле обязательно для заполнения",
+            },
+            'date_out': {
+                'invalid': 'Неправильная дата',
+                "required": "Это поле обязательно для заполнения",
+            },
+            'date_in': {
+                'invalid': 'Неправильное время',
                 "required": "Это поле обязательно для заполнения",
             }
         }

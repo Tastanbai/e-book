@@ -26,6 +26,12 @@
             {{ form.name }}
             <span class="error_info">{{ form.name.errors.0 }}</span>
         </div>
+
+        <div class="form-group">
+            <label for="id_author">{{ form.author.label }}</label>
+            {{ form.author }}
+            <span class="error_info">{{ form.author.errors.0 }}</span>
+        </div>
         
         <div class="form-group">
             <label for="id_bbk">{{ form.bbk.label }}</label>

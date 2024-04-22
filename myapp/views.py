@@ -1,5 +1,6 @@
 import json
 from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
+from django.utils import timezone
 from .forms import LoginForm, RegForm, PublishForm, BookForm
 from django.contrib.auth import authenticate, login as auth_login
 from .models import Book, Publish
@@ -8,6 +9,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.contrib.auth.models import User
+from django.core.mail import send_mail
 
 
 def user_login(request):
@@ -146,6 +148,35 @@ def reg(request):
     return render(request, 'myapp/reg.html', context=context)
 
 
+# @login_required
+# def add_publish(request):
+#     user_books = Book.objects.filter(user=request.user)
+#     if request.method == 'POST':
+#         form = PublishForm(request.POST)
+#         form.fields['book'].queryset = user_books
+
+#         if form.is_valid():
+#             book = form.cleaned_data['book']
+#             quantity_requested = form.cleaned_data['quantity']
+
+#             # Проверяем, достаточно ли книг в наличии
+#             if book.balance_quantity < quantity_requested:
+#                 form.add_error('quantity', f"Только {book.balance_quantity} книг доступно.")
+#                 return render(request, 'myapp/add_publish.html', {'form': form})
+            
+#             publish_instance = form.save(commit=False)
+#             publish_instance.user = request.user
+#             publish_instance.save()
+
+#             return redirect(reverse('myapp:rent_book'))
+
+#         return render(request, 'myapp/add_publish.html', {'form': form})
+    
+#     else:
+#         form = PublishForm()
+#         form.fields['book'].queryset = user_books
+#         return render(request, 'myapp/add_publish.html', {'form': form})
+
 @login_required
 def add_publish(request):
     user_books = Book.objects.filter(user=request.user)
@@ -154,28 +185,35 @@ def add_publish(request):
         form.fields['book'].queryset = user_books
 
         if form.is_valid():
-            book = form.cleaned_data['book']
-            quantity_requested = form.cleaned_data['quantity']
-
-            # Проверяем, достаточно ли книг в наличии
-            if book.balance_quantity < quantity_requested:
-                form.add_error('quantity', f"Только {book.balance_quantity} книг доступно.")
-                return render(request, 'myapp/add_publish.html', {'form': form})
-            
             publish_instance = form.save(commit=False)
             publish_instance.user = request.user
+
+            # Проверяем наличие книги перед сохранением
+            if publish_instance.book.balance_quantity < form.cleaned_data['quantity']:
+                form.add_error('quantity', f"Только {publish_instance.book.balance_quantity} книг доступно.")
+                return render(request, 'myapp/add_publish.html', {'form': form})
+
             publish_instance.save()
-                
+
+            # Отправляем уведомление на email, указанный в форме
+            recipient_email = form.cleaned_data['email']  # Убедитесь, что поле email корректно настроено в форме
+            send_mail(
+                'Подтверждение аренды книги',
+                f'Уважаемый {form.cleaned_data['name']}, вы успешно арендовали книгу "{publish_instance.book.name}" на дату {publish_instance.date_out}. Возврат до {publish_instance.date_in}.',
+                'sms@kitap-nomad.kz',  # Измените на ваш активный email
+                [recipient_email],
+                fail_silently=False,
+            )
+
             return redirect(reverse('myapp:rent_book'))
-        
+
         return render(request, 'myapp/add_publish.html', {'form': form})
     
     else:
         form = PublishForm()
         form.fields['book'].queryset = user_books
-        return render(request, 'myapp/add_publish.html', {'form': form}) 
-    
-    
+        return render(request, 'myapp/add_publish.html', {'form': form})
+
 def return_book(request, publish_id):
     # Получаем объект Publish по ID или возвращаем 404 ошибку, если такого нет
     publish = get_object_or_404(Publish, id=publish_id)
@@ -200,7 +238,57 @@ def rent_book(request):
             Q(city__icontains=search_query) |
             Q(email__icontains=search_query) |
             Q(phone__icontains=search_query) |
+            Q(iin__icontains=search_query) |
             Q(book__name__icontains=search_query)  # Исправлено на поле в связанной модели
         )
 
     return render(request, 'myapp/rent_book.html', {'publish_list': publish_list})
+
+
+
+@login_required
+def blacklist(request):
+    query = request.GET.get('q', '')  # Получаем поисковый запрос из GET параметра 'q'
+    if query:
+        # Фильтруем просроченные публикации по имени пользователя, книге или ИИН
+        overdue_publishes = Publish.objects.filter(
+            user=request.user,
+            date_in__lt=timezone.now().date(),
+            date_in__isnull=False
+        ).filter(
+            Q(name__icontains=query) |  # Поиск по имени
+            Q(book__name__icontains=query) |  # Поиск по названию книги
+            Q(iin__icontains=query)  # Поиск по ИИН
+        )
+    else:
+        # Выводим все просроченные публикации текущего пользователя
+        overdue_publishes = Publish.objects.filter(
+            user=request.user,
+            date_in__lt=timezone.now().date(),
+            date_in__isnull=False
+        )
+
+    return render(request, 'myapp/blacklist.html', {
+        'overdue_publishes': overdue_publishes,
+        'query': query
+    })
+
+@login_required
+def send_email(request):
+    if request.method == 'POST':
+        publish_id = request.POST.get('publish_id')
+        try:
+            # Убеждаемся, что запись принадлежит текущему пользователю
+            publish = Publish.objects.get(id=publish_id, user=request.user)
+            if publish.email:
+                send_mail(
+                    'Истек срок возврата',
+                    f'У вас есть просроченные записи, пожалуйста, верните книгу {publish.book.name} как можно скорее.',
+                    'sms@kitap-nomad.kz',
+                    [publish.email],
+                    fail_silently=False,
+                )
+        except Publish.DoesNotExist:
+            return HttpResponse("Запись не найдена", status=404)  # Возвращаем ошибку, если запись не найдена или не принадлежит пользователю
+        return redirect('myapp:blacklist')
+    return redirect('myapp:blacklist')
