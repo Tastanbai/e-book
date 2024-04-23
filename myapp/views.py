@@ -102,9 +102,14 @@ def edit_book(request, id):
 
 
 
+# def delete_book(request, id):
+#     Book.objects.filter(id=id).delete()
+#     return redirect(reverse('myapp:index'))
+
 def delete_book(request, id):
-    Book.objects.filter(id=id).delete()
-    return redirect(reverse('myapp:index'))
+    book = get_object_or_404(Book, id=id)
+    book.delete()
+    return redirect('myapp:index')
 
 
 def reg(request):
@@ -214,13 +219,37 @@ def add_publish(request):
         form.fields['book'].queryset = user_books
         return render(request, 'myapp/add_publish.html', {'form': form})
 
+# def return_book(request, publish_id):
+#     # Получаем объект Publish по ID или возвращаем 404 ошибку, если такого нет
+#     publish = get_object_or_404(Publish, id=publish_id)
+#     # Удаляем объект, сигнал post_delete автоматически обновит balance_quantity
+#     publish.delete()
+#     # Перенаправляем пользователя на предыдущую страницу или главную страницу
+#     return redirect('myapp:rent_book')
+
+@login_required
 def return_book(request, publish_id):
-    # Получаем объект Publish по ID или возвращаем 404 ошибку, если такого нет
-    publish = get_object_or_404(Publish, id=publish_id)
-    # Удаляем объект, сигнал post_delete автоматически обновит balance_quantity
-    publish.delete()
-    # Перенаправляем пользователя на предыдущую страницу или главную страницу
-    return redirect('myapp:rent_book')
+    if request.method == 'POST':
+        try:
+            # Убеждаемся, что запись принадлежит текущему пользователю
+            publish = Publish.objects.get(id=publish_id, user=request.user)
+
+            # Удаляем объект, сигнал post_delete автоматически обновит balance_quantity
+            publish.delete()
+
+            # Отправляем email пользователю, если у записи есть email
+            if publish.email:
+                send_mail(
+                    'Возврат книги подтвержден',
+                    f'Уважаемый(ая) ваша книга {publish.book.name} успешно возвращена. Спасибо, что пользуетесь нашей библиотекой!',
+                    'sms@kitap-nomad.kz',
+                    [publish.email],
+                    fail_silently=False,
+                )
+            return redirect('myapp:blacklist')  # Перенаправляем на страницу после успешного возврата
+        except Publish.DoesNotExist:
+            return HttpResponse("Запись не найдена или не принадлежит вам", status=404)
+    return redirect('myapp:blacklist')  # Перенаправляем, если метод не POST или другие условия
 
 
 def rent_book(request):

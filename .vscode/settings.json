@@ -48,5 +48,7 @@
             "comments": true,
             "strings": true
         }
-    }
+    },
+    "CodeGPT.apiKey": "CodeGPT Plus Beta",
+    "CodeGPT.query.language": "Russian"
 }
