@@ -19,7 +19,6 @@
             padding: 10px; /* Увеличиваем внутренний отступ кнопки */
             font-size: 14px; /* Изменяем размер текста кнопки */
             text-align: center; /* Центрируем содержимое блока */
-            
         }
         .error_info {
             font-weight: 400;
@@ -41,7 +40,6 @@
         .fas {
             margin-right: 5px;
         }
-
         nav {
             background-color: #f0f0f0; /* Light grey background for the nav */
             border-radius: 8px; /* Rounded corners for the nav */
@@ -71,7 +69,6 @@
         }
         .messages li.success { color: green; }
         .messages li.error { color: red; }
-        
     </style>
 </head>
 <body> 
@@ -87,6 +84,7 @@
                 <li><a href="{% url 'myapp:index' %}">Библиотека</a></li>
                 <li><a href="{% url 'myapp:rent_book' %}">Прокат книг</a></li>
                 <li><a href="{% url 'myapp:blacklist' %}">Черный список </a></li>
+                <li><a href="{% url 'myapp:view_returned_books' %}">Для учета</a></li>
             </ul>
         </nav>
     </header>
@@ -143,7 +141,6 @@
                 {% endfor %}
                 </tbody>
             </table>
-            
 
 <script>
     $(document).ready(function() {

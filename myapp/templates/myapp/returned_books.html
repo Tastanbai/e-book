@@ -1,10 +1,12 @@
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Библиотека</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel='stylesheet'>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"> 
     <link rel="icon" href="https://icon-icons.com/icons2/405/PNG/512/Books_40673.png" type="image/x-icon">
+    
     <style>
         .header-container {
             display: flex;
@@ -68,6 +70,7 @@
             background-color: #ddd; /* Light grey background on hover/focus */
             border-radius: 4px; /* Rounded corners on hover/focus */
         }
+        
     </style>
 </head>
 <body> 
@@ -88,22 +91,61 @@
         </nav>
     </header>
 
-        <div class="container">
+        {% comment %} <div class="container">
             <div class="input-group mb-3">
                 <div class="container">
-                    <form method="GET" action="{% url 'myapp:rent_book' %}" class="input-group mb-3">
+                    <form method="GET" action="{% url 'myapp:index' %}" class="input-group mb-3">
                         <input type="text" class="form-control" placeholder="Search for books..." name="q" value="{{ request.GET.q }}">
                         <button class="btn btn-outline-secondary" type="submit">Search</button>
                     </form>
                 </div>
-            </div>
+            </div> {% endcomment %}
             
+<div class="container mt-4">
+    <h1>Список книг для учета</h1>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ФИО</th>
+                    <th>ИИН</th>
+                    <th>Дата выдачи</th>
+                    <th>Дата возврата</th>
+                    <th>Адрес</th>
+                    <th>Email</th>
+                    <th>Номер телефона</th>
+                    <th>Название книги</th>
+                    <th>Количество</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for publish in returned_books %}
+                <tr>
+                    <td>{{ publish.name }}</td>
+                    <td>{{ publish.iin }}</td>
+                    <td>{{ publish.date_out }}</td>
+                    <td>{{ publish.date_in }}</td>
+                    <td>{{ publish.city }}</td>
+                    <td>{{ publish.email }}</td>
+                    <td>{{ publish.phone }}</td>
+                    <td>{{ publish.book_name }}</td>
+                    <td>{{ publish.quantity }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if messages %}
+    <div class="alert alert-info" role="alert">
+        {% for message in messages %}
+        {{ message }}
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
 
-{% block content_publishers_authors %}
-{% include 'myapp/publishes.html' %}
-{% endblock content_publishers_authors %}
-         
-
+              
+               
 <script>
     $(document).ready(function() {
         // При клике на любую ссылку сортировки
@@ -122,5 +164,4 @@
     </div>
 </body>
 </html> 
-
 
