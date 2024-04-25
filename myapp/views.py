@@ -210,7 +210,7 @@ def add_publish(request):
             recipient_email = form.cleaned_data['email']  # Убедитесь, что поле email корректно настроено в форме
             send_mail(
                 'Подтверждение аренды книги',
-                f'Уважаемый {form.cleaned_data['name']}, вы успешно арендовали книгу "{publish_instance.book.name}" на дату {publish_instance.date_out}. Возврат до {publish_instance.date_in}.',
+                f"Уважаемый {form.cleaned_data['name']}, вы успешно арендовали книгу '{publish_instance.book.name}' на дату {publish_instance.date_out}. Возврат до {publish_instance.date_in}.",
                 'sms@kitap-nomad.kz',  # Измените на ваш активный email
                 [recipient_email],
                 fail_silently=False,
