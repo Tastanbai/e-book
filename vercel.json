@@ -2,15 +2,15 @@
     "version": 2,
     "builds": [
       {
-        "src": "Dockerfile",
-        "use": "@vercel/docker"
-      },
-      {
         "src": "build_files.sh",
         "use": "@vercel/static-build",
         "config": {
           "distDir": "staticfiles_build"
         }
+      },
+      {
+        "src": "myproject/wsgi.py",
+        "use": "@vercel/python"
       }
     ],
     "routes": [
