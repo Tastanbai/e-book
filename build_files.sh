@@ -1,12 +1,8 @@
 #!/bin/bash
-echo "Where is Python:"
+export PATH="/usr/bin/python:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
 which python
-echo "Python Version:"
-python --version
-echo "Where is Pip:"
-which pip
-echo "Pip Version:"
-pip --version
+which python3
 
 # Проверка на наличие файла requirements.txt перед установкой зависимостей
 if [ -f "requirements.txt" ]; then
