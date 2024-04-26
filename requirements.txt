@@ -1,2 +1,2 @@
-
+pysqlite3
 Django==5.0.3
