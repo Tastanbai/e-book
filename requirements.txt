@@ -1,16 +1,2 @@
-asgiref==3.4.1
-blinker==1.4
-cryptography==3.4.8
+
 Django==5.0.3
-greenlet==1.1.1
-importlib-metadata==4.8.1
-jeepney==0.7.1
-lazr.restfulclient==0.14.4
-lazr.uri==1.0.6
-more-itertools==8.10.0
-oauthlib==3.2.0
-PyJWT==2.3.0
-PyYAML==5.4.1
-SecretStorage==3.3.1
-six==1.16.0
-typing-extensions==4.1.1
