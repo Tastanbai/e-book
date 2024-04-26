@@ -8,12 +8,9 @@ jeepney==0.7.1
 lazr.restfulclient==0.14.4
 lazr.uri==1.0.6
 more-itertools==8.10.0
-mysqlclient==2.1.0
 oauthlib==3.2.0
 PyJWT==2.3.0
 PyYAML==5.4.1
 SecretStorage==3.3.1
 six==1.16.0
-SQLAlchemy==1.4.26
-sqlparse==0.5.6
 typing-extensions==4.1.1
